@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper-cert">
+
+   
+   <select id="login" parameterType="java.util.Map" resultType="esc.vo.User">
+      select user_no userNo, user_name userName, gender, date_of_birth dateOfBirth, user_password userPassword, seat_num seatNum, distance, category, address
+      from user 
+      where user_no = #{userNo} and user_password=#{userPassword};
+   </select> 
+
+   <update id="signupUpdate" parameterType="esc.vo.User">    
+   	  update user   
+      <set>
+      user_password=#{userPassword},
+      address=#{address}
+      </set>
+      where user_no = #{userNo} and user_name=#{userName};
+      <!-- and user_password is not null and date_of_birth is not null and address is not null 문장이랑 고민중 -->
+      <!-- required 했더니 수정할 필요 없는 듯 하지만 혹시 몰라서 남겨놓음 -->
+   </update>
+           
+   <select id="dayCheck" parameterType="esc.vo.Reservation" resultType="esc.vo.Reservation">
+   	  select r.reservation_date, r.reservation_time, r.reservation_confirmation, r.user_no, r.seat_num, u.user_name
+	  from user u join reservation r
+	  on u.user_no = r.user_no and u.seat_num = r.seat_num
+	  where r.reservation_date = #{reservationDate};
+   </select> 
+  
+  
+<!--    <select id="monthCheck" parameterType="esc.vo.ReserveUser" resultType="esc.vo.ReserveUser">
+  	  select r.reservation_date, r.reservation_time, r.reservation_confirmation, r.user_no, r.seat_num, u.user_name
+	  from user u join reservation r
+	  on u.user_no = r.user_no and u.seat_num = r.seat_num
+	  where r.reservation_date = #{reservationDate}; 
+   </select>  -->
+
+</mapper>

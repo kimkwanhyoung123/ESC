@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper-user">
+
+	<!-- 학생페이지 관련 mapper입니다! -->
+
+
+	<!-- [신청페이지]에서 예약일자, 예약시간 db에 추가하기 -->
+	<insert id="insertReservation" parameterType="esc.vo.Reservation">
+		insert into reservation(reservation_date,
+		reservation_time, seat_num, user_no) values
+		(#{reservationDate},
+		#{reservationTime},
+		#{seatNum}, #{userNo})
+	</insert>
+
+	<!-- 예약자 현황 띄워주기 --> <!-- 예약테이블에서 예약한 사람 띄워주는 쿼리문 () -->
+	<select id="getReservationUser" resultType="esc.vo.Reservation">
+		select *
+		from
+		reservation
+		where date(reservation_date) = CURDATE();
+	</select>
+
+	<select id="getReservListInSeat" resultType="esc.vo.Seat">
+		select *
+		from seat
+		order by seat_num ASC
+	</select>
+
+	<delete id="deleteReservation" parameterType="java.util.Map">
+		delete
+		from
+		reservation
+		where user_no = #{userNo} and reservation_date =
+		#{reservationDate}
+	</delete>
+
+	<update id="updateSeat" parameterType="String">
+		update seat
+		set
+		reservation_confirmation = 'N'
+		where user_no = #{userNo}
+	</update>
+
+	<!-- card값이 이미 부여된 상태에서 다음 예약자가 더 늦게까지 남아서 card값이 'Y'가 되어야 하는 경우 그 전에 부여된 
+		card값을 'N'으로 수정하는 쿼리문 -->
+<!-- 	<update id="updateReservationReset"
+		parameterType="esc.vo.Reservation">
+		UPDATE reservation
+		SET card = 'N'
+		WHERE card = 'Y';
+	</update>
+ -->
+	<update id="updateReservationConfirm" parameterType="String">
+		update seat
+		set reservation_confirmation = 'Y'
+		where seat_num in (select seat_num
+		from reservation where reservation_date
+		= CURDATE())
+	</update>
+	
+	<!-- 관형 추가부분 -->
+	<update id="modifyReservationTime" parameterType="esc.vo.Reservation">
+		update reservation set reservation_time = #{reservationTime}
+		where reservation_date = #{reservationDate}
+		and seat_num = #{seatNum}
+		and user_no = #{userNo}
+	</update>
+
+</mapper>

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper-manager">
+
+
+	<!-- 학생 추가 -->
+ <insert id="insertUser" parameterType="esc.vo.User">
+      insert into user(user_no, user_name, gender, category, hire_year) 
+      values (#{userNo}, #{userName}, #{gender}, 'student', year(now()))
+   </insert>
+
+	<!-- // 유저 리스트 불러오기 -->
+	<select id="getListByUser" resultType="esc.vo.User">
+		select *
+		from user where category = 'student' and hire_year = year(now()) order by user_no
+	</select>
+
+	<!-- // 퇴소 버튼을 눌렀을 때 -->
+	<delete id="deleteUser" parameterType="String">
+		delete from user where user_no = #{userNo}
+	</delete>
+
+	<!-- // 학번과 이름만 있는 리스트 불러오기 + 셀렉트문 저게 맞는 지 -->
+	<select id="getPositionListByUser" resultType="esc.vo.User">
+		select *
+		from user
+
+	</select>
+
+	<!-- // 좌석 배치를 해줘야한다 -->
+	<update id="insertPositionUser" parameterType="java.util.Map">
+		update user
+		set seat_num = #{seatNum}
+		where user_no = #{userNo};
+	</update>
+	
+		<!-- // 좌석 배치를 이중 업데이트 해줘야한다 -->
+ 	<update id="insertPositionSeat" parameterType="java.util.Map">
+		update seat	
+		set user_no = #{userNo}
+		where seat_num = #{seatNum};
+	</update> 
+	
+
+<!-- 사용자 정보 가져오기 -->
+	<select id="getUserInfoByUserId" resultType="esc.vo.User">
+		select * from user
+		where user_No = #{userNo}
+	</select>
+
+	<!-- 팝업창에서 업데이트 -->
+   <update id="updateUserInfo" parameterType="esc.vo.User">
+      update user
+      set
+      user_Name = #{userName},
+      gender = #{gender},
+      date_of_birth = #{dateOfBirth},
+      address = #{address}
+      where user_No = #{userNo}
+   </update>
+
+<!-- 사용자의 총 자습 시간을 조회 보험-->
+<!--      <select id="getTotalStudyTime" parameterType="String" resultType="double">
+      select cast(sum(reservation_time) as decimal(10, 2)) as total_reservation_time
+      from reservation
+      where user_No = #{userNo}
+     </select>  -->
+     
+     <!-- 사용자 총 자습 시간 랭킹 -->
+	<select id="getStudyStatsByUserNo" resultType="esc.vo.UserStatics">
+       SELECT u.user_no, r.total_reservation_time, r.rank_reservation_time FROM user u
+   LEFT JOIN
+    (SELECT user_no, SUM(reservation_time) AS total_reservation_time, RANK() OVER (ORDER BY SUM(reservation_time) DESC) AS rank_reservation_time 
+    FROM reservation
+   GROUP BY user_no
+   ORDER BY total_reservation_time DESC) r 
+    ON u.user_no = r.user_no
+   WHERE
+    u.user_no = #{userNo}
+   
+   </select>
+
+
+	<select id="getSeats" resultType="esc.vo.Seat">
+	SELECT user_no, seat_num, CONVERT(seat_num, SIGNED INT) AS seat_num_int, reservation_confirmation
+	FROM seat
+	ORDER BY seat_num_int ASC;
+	</select>
+
+	<update id="updateSeats" parameterType="esc.vo.Seat">
+		update seat set user_no =
+		#{userNo} where seat_num = #{seatNum};
+		update user set seat_num =
+		#{seatNum} where user_no = #{userNo};
+	</update>
+
+	<select id="getDateList" parameterType="String"
+		resultType="esc.vo.Reservation">
+		select r.reservation_date, r.reservation_time, r.seat_num,
+		u.user_no, u.user_name
+		from reservation r join user u on r.user_no = u.user_no
+		where reservation_date = #{date} order by reservation_time, u.user_no;
+	</select>
+
+	<select id="getMonthList" parameterType="int"
+		resultType="esc.vo.Reservation">
+		select r.reservation_date, r.reservation_time, r.seat_num,
+		u.user_no, u.user_name
+		from reservation r join user u on r.user_no = u.user_no
+		where month(reservation_date) = #{month} and year(reservation_date) = year(now())
+		order by reservation_date, reservation_time, u.user_no;
+	</select>
+	
+	
+	<!-- 추가한 코드 (09/18) -->
+	<select id="getListByReservation" resultType="esc.vo.Reservation">
+		select *
+		from reservation order by user_no
+	</select>
+
+
+
+
+
+
+
+
+
+	<!-- <select id="getListAddrBook" resultType="addrbook.vo.AddrBook"> select 
+		ab_id abId , ab_name abName , ab_email abEmail , ab_birth abBirth , ab_tel 
+		abTel , ab_comdept abComdept , ab_memo abMemo from addrbook </select> -->
+
+	<!-- camelcase 로 변환해서 가능 -->
+	<!-- <select id="getListAddrBook" resultType="addrbook.vo.AddrBook"> select 
+		* from addrbook </select> <select id="getAddrBookById" resultType="addrbook.vo.AddrBook" 
+		parameterType="int"> select * from addrbook where ab_id = #{id} </select> 
+		<insert id="insertAddrBook" parameterType="addrbook.vo.AddrBook"> insert 
+		into addrbook(ab_name, ab_email, ab_birth, ab_tel, ab_comdept, ab_memo) values(#{abName}, 
+		#{abEmail}, #{abBirth}, #{abTel}, #{abComdept}, #{abMemo}) </insert> <delete 
+		id="deleteAddrBook" parameterType="java.lang.String"> delete from addrbook 
+		where ab_id = #{id} </delete> <update id="editAddrBook"> update addrbook 
+		<set> <if test="abName != null">ab_name=#{abName},</if> <if test="abEmail 
+		!= null">ab_email=#{abEmail},</if> <if test="abBirth != null">ab_birth=#{abBirth},</if> 
+		<if test="abTel != null">ab_tel=#{abTel},</if> <if test="abComdept != null">ab_comdept=#{abComdept},</if> 
+		<if test="abMemo != null">ab_memo=#{abMemo},</if> <if test="abId != null">ab_id=#{abId}</if> 
+		</set> where ab_id = #{abId} </update> -->
+
+</mapper>
