@@ -87,13 +87,20 @@ ESC를 통해 학생은 자습을 신청하고 자습 관련 정보(당일 자�
 - 신청이 끝난 후에 본인 자리에 색깔이 표시되는 기능
 </p>
 <p>
-  <img src="ESC/images/common/seat.jpg">
+  <img src="ESC/images/common/seat6.jpg">
+</p>
+<p>
+  <img src="ESC/images/common/seat3.jpg">
 </p>
 
 ### 기능 3
 <p>
-마감담당자 자동 선택 기능<br>
-- 자습신청시 예상 종료시간을 입력하면 가장 늦은 시간까지 자습하는 사람에게 자동으로 마감담당자 역활 부여
+일별 / 월별 자습시간 확인 기능<br>
+- 자습 신청 시 데이터 베이스에 개별 자습시간이 일자별로 누적되어 자동 확인 가능<br>
+- 수기로 작성한 자습시간을 일일이 사람이 더하는 시스템 개선
+</p>
+<p>
+  <img src="ESC/images/common/seat7.jpg">
 </p>
 
 
