@@ -87,10 +87,10 @@ ESC를 통해 학생은 자습을 신청하고 자습 관련 정보(당일 자�
 - 신청이 끝난 후에 본인 자리에 색깔이 표시되는 기능
 </p>
 <p>
-  <img src="ESC/images/common/seat6.jpg">
+  <img src="ESC/images/common/seat6.png">
 </p>
 <p>
-  <img src="ESC/images/common/seat3.jpg">
+  <img src="ESC/images/common/seat3.png">
 </p>
 
 ### 기능 3
@@ -100,7 +100,7 @@ ESC를 통해 학생은 자습을 신청하고 자습 관련 정보(당일 자�
 - 수기로 작성한 자습시간을 일일이 사람이 더하는 시스템 개선
 </p>
 <p>
-  <img src="ESC/images/common/seat7.jpg">
+  <img src="ESC/images/common/seat7.png">
 </p>
 
 
